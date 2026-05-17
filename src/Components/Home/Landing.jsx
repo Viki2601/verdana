@@ -43,13 +43,12 @@ const useTouchToMouseBridge = (containerRef) => {
         };
 
         const onTouchMove = (e) => {
-            e.preventDefault();
             const touch = e.touches[0];
             dispatchMouseEvent("mousemove", touch);
         };
 
         container.addEventListener("touchstart", onTouchStart, { passive: true });
-        container.addEventListener("touchmove", onTouchMove, { passive: false });
+        container.addEventListener("touchmove", onTouchMove, { passive: true });
         return () => {
             container.removeEventListener("touchstart", onTouchStart);
             container.removeEventListener("touchmove", onTouchMove);
