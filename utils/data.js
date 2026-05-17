@@ -82,6 +82,7 @@ export const ROOMS = [
         size: "480 sq ft",
         gradient: "linear-gradient(135deg,#091c10,#1a4a22,#2d7a3d)",
         icon: "🌿",
+        image: "https://assets.cntraveller.in/photos/60b9f801e1b212c19a816b9b/16:9/w_960,c_limit/vanya1.jpg",
     },
     {
         id: 2,
@@ -91,6 +92,7 @@ export const ROOMS = [
         size: "680 sq ft",
         gradient: "linear-gradient(135deg,#0d1a0a,#1e3d10,#3a6a20)",
         icon: "🏞️",
+        image: "https://t3.ftcdn.net/jpg/09/18/71/36/360_F_918713625_g4lGndHyvLdubnnyXmps4S6j1ylxRT8X.jpg",
     },
     {
         id: 3,
@@ -100,15 +102,7 @@ export const ROOMS = [
         size: "320 sq ft",
         gradient: "linear-gradient(135deg,#06091a,#101e3a,#1e3a6a)",
         icon: "✨",
-    },
-    {
-        id: 4,
-        type: "Mountain Lodge",
-        desc: "Stone-and-timber lodge with panoramic windows framing the great Himalayan range.",
-        guests: "6 Guests",
-        size: "1,100 sq ft",
-        gradient: "linear-gradient(135deg,#0a0e14,#1a2230,#2a3a50)",
-        icon: "🏔️",
+        image: "https://gos3.ibcdn.com/dd11e79e-18ae-4342-92b4-4b571e375a16.jpeg",
     },
 ];
 

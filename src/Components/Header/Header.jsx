@@ -60,7 +60,7 @@ export default function Header() {
                         </a>
                     ))}
                     <button className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#c9a84c] via-[#b99b3c] to-[#c9a84c] px-6 py-3 text-[0.78rem] font-semibold text-[#060e09] shadow-[0_12px_30px_rgba(201,168,76,.25)]">
-                        Book a Spot ↗
+                        Book a Spot
                     </button>
                 </div>
             )}

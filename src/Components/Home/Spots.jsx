@@ -16,7 +16,7 @@ export default function SpotsSection() {
     }, []);
 
     const spotCards = SPOTS.map((spot) => (
-        <div key={spot?.id} className="group relative overflow-hidden rounded-[36px] border border-white/10 bg-[#08110d]/60 shadow-[0_30px_90px_rgba(0,0,0,0.35)] transition duration-500 hover:-translate-y-3 hover:shadow-[0_40px_120px_rgba(0,0,0,0.45)]">
+        <div key={spot?.id} className="group relative overflow-hidden rounded-[36px] border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.35)] transition duration-500 hover:shadow-[0_40px_120px_rgba(0,0,0,0.45)]">
             <div className="absolute inset-0 bg-center bg-no-repeat bg-cover" style={{ backgroundImage: `url(${spot?.image})`, backgroundColor: spot?.gradient, minHeight: '420px' }} />
             <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/55 to-transparent" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(201,168,76,0.18),transparent_22%)] opacity-90" />

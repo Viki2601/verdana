@@ -4,16 +4,15 @@ import dynamic from "next/dynamic";
 const WaterWave = dynamic(() => import("react-water-wave"), { ssr: false, loading: () => null });
 
 const useWebGLSupport = () => {
-    const [supported, setSupported] = useState(null);
-    useEffect(() => {
+    const [supported] = useState(() => {
         try {
             const canvas = document.createElement("canvas");
             const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-            setSupported(!!gl);
+            return !!gl;
         } catch {
-            setSupported(false);
+            return false;
         }
-    }, []);
+    });
     return supported;
 };
 
@@ -70,6 +69,50 @@ const HERO_STYLE = {
     backgroundImage: `url('${HERO_IMAGE_URL}')`,
 };
 
+const LEFT_TREES = [
+    {
+        src: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2nFLJ18sOh8o7lMFsbAcerJSRd2ET6mCjIGW1",
+        className: "h-[520px] sm:h-[620px] w-[320px] sm:w-[380px] rounded-[40px] min-w-[250px]",
+        style: { marginBottom: '-220px', marginRight: '-524px' },
+    },
+    {
+        src: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu24Qh0d1JCaVyhz0b7D3v8HMJO9eW2cx4ojFgt",
+        className: "h-[520px] sm:h-[620px] w-[320px] sm:w-[380px] rounded-[40px] min-w-[250px]",
+        style: { marginBottom: '-180px', marginRight: '-512px' },
+    },
+    {
+        src: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2bLVWjQ64ZSAgU1jEw3BthvWKm9qFD4TNXYIb",
+        className: "h-[520px] sm:h-[620px] w-[320px] sm:w-[380px] rounded-[40px] min-w-[250px]",
+        style: { marginBottom: '-80px', marginRight: '400px' },
+    },
+    {
+        src: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2H74mdEu6esjuhNMCvDq9kPfLXYSmFaEOoHR5",
+        className: "h-[420px] sm:h-[500px] w-[280px] sm:w-[340px] rounded-[36px] min-w-[250px]",
+        style: { marginBottom: '-100px', marginLeft: '-320px' },
+    },
+    {
+        src: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2Buu0TUEGlbupVxAHtyOkTLm0DJ38cYEUZS7I",
+        className: "h-[1720px] sm:h-[500px] w-[280px] sm:w-[340px] rounded-[36px] min-w-[1210px]",
+        style: { marginBottom: '-100px', marginLeft: '-870px' },
+    },
+];
+
+function TreeCorners({ scrollY }) {
+    const treeOpacity = Math.max(0, 1 - scrollY / 260);
+    const treeShift = Math.min(scrollY * 0.24, 180);
+    const treeY = Math.min(scrollY * 0.08, 36);
+
+    return (
+        <>
+            <div className="pointer-events-none absolute left-0 bottom-0 z-20 hidden lg:flex items-end gap-1 sm:gap-2 px-4 pb-4 sm:px-6" style={{ opacity: treeOpacity, transform: `translate3d(-${treeShift}px, ${treeY}px, 0)`, transition: 'transform 0.2s ease-out, opacity 0.2s ease-out', }}>
+                {LEFT_TREES.map((tree, index) => (
+                    <div key={index} className={`${tree.className} bg-contain bg-no-repeat bg-center`} style={{ ...tree.style, backgroundImage: `url(${tree.src})` }} />
+                ))}
+            </div>
+        </>
+    );
+}
+
 function LandingContent({ scrollY }) {
     const heroOpacity = Math.max(1 - scrollY / 640, 0.24);
     const heroTranslate = Math.min(scrollY * 0.16, 100);
@@ -78,7 +121,7 @@ function LandingContent({ scrollY }) {
     return (
         <>
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_20%,rgba(13,58,32,0.24)_0%,rgba(6,14,9,0.5)_52%,rgba(4,10,6,0.85)_100%)] pointer-events-none" />
-            <div className="relative z-10 flex max-w-[1280px] flex-col gap-12 px-6 py-24 sm:px-8 md:py-32 lg:flex-row items-start lg:gap-16" style={{ transform: `translateY(-${heroTranslate}px) scale(${heroScale})`, opacity: heroOpacity, transition: "transform 0.2s ease-out, opacity 0.2s ease-out", }}>
+            <div className="relative z-10 flex max-w-7xl flex-col gap-12 px-6 py-24 sm:px-8 md:py-32 lg:flex-row items-start lg:gap-16" style={{ transform: `translateY(-${heroTranslate}px) scale(${heroScale})`, opacity: heroOpacity, transition: "transform 0.2s ease-out, opacity 0.2s ease-out", }}>
                 <div className="lg:flex-1">
                     <div className="eyebrow mb-5 text-sm uppercase tracking-[0.28em] text-[#d7d7c6]/80">
                         ✦ Nature-First Escapes ✦
@@ -90,15 +133,15 @@ function LandingContent({ scrollY }) {
                         <span className="gradient-text">mountain retreat</span>
                     </h1>
 
-                    <p className="max-w-[42rem] text-base leading-[1.85] text-[rgba(244,239,230,0.84)] sm:text-lg">
+                    <p className="max-w-2xl text-base leading-[1.85] text-[rgba(244,239,230,0.84)] sm:text-lg">
                         Seamless booking for curated cabins, lodges, and forest hideaways — designed to reconnect you with the wild while keeping comfort front of mind.
                     </p>
 
                     <div className="mt-10 flex flex-wrap gap-4">
-                        <button className="btn-gold inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold transition duration-300 hover:-translate-y-0.5">
+                        <button className="cursor-pointer btn-gold inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold transition duration-300 hover:-translate-y-0.5">
                             Book a Spot →
                         </button>
-                        <button className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-6 py-4 text-sm font-semibold text-white/90 transition duration-300 hover:bg-white/15">
+                        <button className="cursor-pointer inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-6 py-4 text-sm font-semibold text-white/90 transition duration-300 hover:bg-white/15">
                             View itineraries
                         </button>
                     </div>
@@ -125,12 +168,14 @@ export default function Landing() {
         return (
             <section className="relative w-full overflow-hidden bg-cover bg-center" style={HERO_STYLE}>
                 <LandingContent scrollY={scrollY} />
+                <TreeCorners scrollY={scrollY} />
             </section>
         );
     }
 
     return (
         <section ref={containerRef} className="relative w-full overflow-hidden p-5 lg:p-24">
+            <TreeCorners scrollY={scrollY} />
             <WaterWave imageUrl={HERO_IMAGE_URL} dropRadius={20} perturbance={0.03} resolution={512} style={{ ...HERO_STYLE, width: "100%", borderRadius: "3rem" }}>
                 {() => <LandingContent scrollY={scrollY} />}
             </WaterWave>

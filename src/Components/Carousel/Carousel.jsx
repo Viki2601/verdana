@@ -64,7 +64,7 @@ export default function Carousel({ children, className = '' }) {
             <div ref={containerRef} className="relative overflow-hidden" onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
                 <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(calc(-${current * 100}% + ${dragOffset}px))`, }}>
                     {children?.map((child, index) => (
-                        <div key={index} className="w-full shrink-0">
+                        <div key={index} className="w-full shrink-0 rounded-[36px] overflow-hidden">
                             {child}
                         </div>
                     ))}

@@ -1,34 +1,45 @@
 ﻿'use client';
 import { ROOMS } from "../../../utils/data";
+import { useReveal } from "../../hooks/useReveal";
 
 export default function RoomsSection() {
+    const { ref: sectionRef, isVisible } = useReveal();
     return (
-        <section id="rooms" className="relative overflow-hidden bg-[#070f0a] py-24">
-            <div className="absolute right-[-20%] top-1/2 h-[700px] w-[700px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(26,92,53,0.1)_0%,transparent_70%)]" />
-            <div className="relative mx-auto max-w-[1280px] px-6 md:px-8">
-                <div className="mb-14">
-                    <div className="eyebrow mb-3">✦ Your Sanctuary Awaits</div>
+        <section id="rooms" ref={sectionRef} className={`relative overflow-hidden bg-[#070f0a] py-24 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <div className="absolute right-[-20%] top-1/2 h-175 w-175 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(26,92,53,0.1)_0%,transparent_70%)]" />
+            <div className="relative mx-auto max-w-7xl px-6 md:px-8">
+                <div className="mb-14 max-w-2xl">
+                    <div className="eyebrow mb-3 text-[#a0b187]">✦ Your Sanctuary Awaits</div>
                     <h2 className="section-h text-[#f4efe6]">
                         Curated Stays<br />
                         <em className="italic text-[#7fb069]">for Every Soul</em>
                     </h2>
-                    <div className="nature-divider" />
+                    <p className="mt-4 max-w-xl text-sm leading-7 text-[#c8d3b7]/75">
+                        Discover intimate retreats with immersive mood, premium finishes, and views that feel made just for you.
+                    </p>
+                    <div className="nature-divider mt-8" />
                 </div>
 
-                <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                    {ROOMS?.map((room, i) => (
-                        <div key={i} className="group overflow-hidden rounded-[20px] border border-[rgba(127,176,105,0.15)] bg-[#06120e]/70 transition duration-400 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-2 hover:border-[#c9a84c]/30 hover:shadow-[0_24px_56px_rgba(0,0,0,.5)]">
-                            <div className="relative flex h-[200px] items-center justify-center text-[3.5rem]" style={{ background: room?.gradient }}>
-                                <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E)\"" }} />
-                                <span className="relative drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">{room?.icon}</span>
-                            </div>
-
-                            <div className="rounded-b-[20px] bg-[rgba(13,43,26,0.4)] p-6 backdrop-blur-sm">
-                                <h3 className="mb-2 text-2xl font-[var(--font-cormorant)] font-normal text-[#f4efe6]">{room?.type}</h3>
-                                <p className="mb-4 text-sm leading-7 text-[rgba(192,212,184,0.6)]">{room?.desc}</p>
-                                <div className="flex flex-wrap gap-4 text-[0.7rem] uppercase tracking-[0.08em] text-[rgba(192,212,184,0.45)]">
-                                    <span>👤 {room.guests}</span>
-                                    <span>📐 {room.size}</span>
+                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                    {ROOMS?.map((room) => (
+                        <div key={room?.id} className="group relative overflow-hidden rounded-4xl border border-white/10 bg-[#05100b]/70 shadow-[0_30px_80px_rgba(0,0,0,0.35)] transition duration-500 hover:shadow-[0_40px_100px_rgba(0,0,0,0.45)] min-h-85">
+                            <div className="absolute inset-0 bg-center bg-cover group-hover:scale-105 transition-all duration-500 ease-linear" style={{ backgroundImage: `url(${room?.image})`, backgroundColor: room?.gradient }} />
+                            <div className="absolute inset-0 bg-linear-to-t from-slate-950/95 via-slate-950/55 to-transparent" />
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(127,176,105,0.18),transparent_25%)] opacity-90" />
+                            <div className="relative z-10 flex min-h-85 flex-col justify-end p-6">
+                                <div className="w-full flex flex-col gap-3 sm:items-center sm:justify-between translate-y-18 group-hover:translate-y-0 transition-all duration-500">
+                                    <div>
+                                        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[0.72rem] uppercase tracking-[0.24em] text-[#e6e6e0] backdrop-blur-xl">
+                                            <span>{room?.icon}</span>
+                                            <span>{room?.type}</span>
+                                        </span>
+                                        <p className="mt-2 text-sm leading-7 text-[#d4d6c8]/80">
+                                            {room?.desc}
+                                        </p>
+                                    </div>
+                                    <button className="cursor-pointer w-full rounded-full border border-[#7fb069]/30 bg-[#1a3b21]/80 py-3 text-sm font-semibold text-[#f4efe6] transition duration-300 hover:border-[#c9a84c] hover:bg-[#c9a84c]/15">
+                                        Book Now
+                                    </button>
                                 </div>
                             </div>
                         </div>
