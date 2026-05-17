@@ -130,7 +130,7 @@ export default function Landing() {
     }
 
     return (
-        <section ref={containerRef} className="relative w-full overflow-hidden p-24">
+        <section ref={containerRef} className="relative w-full overflow-hidden p-5 lg:p-24">
             <WaterWave imageUrl={HERO_IMAGE_URL} dropRadius={20} perturbance={0.03} resolution={512} style={{ ...HERO_STYLE, width: "100%", borderRadius: "3rem" }}>
                 {() => <LandingContent scrollY={scrollY} />}
             </WaterWave>
