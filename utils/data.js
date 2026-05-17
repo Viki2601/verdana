@@ -9,6 +9,7 @@ export const SPOTS = [
         desc: "Ancient canopy walks, firefly trails & morning fog that swallows the world.",
         gradient: "linear-gradient(145deg,#040c06 0%,#0d2b1a 35%,#1a5c35 65%,#2d8a50 100%)",
         accent: "#7fb069",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2iIFU5bKEqLJiCV1YMgvynGTPHWueSKxXOAQt",
     },
     {
         id: 2,
@@ -20,17 +21,19 @@ export const SPOTS = [
         desc: "Snow-capped ridgelines, stargazing decks & the silence of a thousand peaks.",
         gradient: "linear-gradient(145deg,#060a12 0%,#111e30 35%,#1e3d60 65%,#3a6890 100%)",
         accent: "#6ab4d8",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2SjJuVYDIk7xBnRCN398vFeADlMOqo4XhsdrJ",
     },
     {
         id: 3,
-        name: "Crystal Lake Retreat",
+        name: "Pillar Rocks",
         location: "Kodaikanal, Tamil Nadu",
-        tag: "Lake",
+        tag: "Mountain",
         price: "₹5,500",
         unit: "/ night",
-        desc: "Still waters reflecting pine forests, kayak at dawn, bonfire by dusk.",
+        desc: "Vertically aligned granite boulders towering 400 feet (122m) above the valley floor",
         gradient: "linear-gradient(145deg,#040a18 0%,#0a1e40 35%,#1a3e80 65%,#2e6aaa 100%)",
         accent: "#4ab0e0",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2EtdycXcNm4gZS0G63lf5oKycB7RPMstJbxFi",
     },
     {
         id: 4,
@@ -42,6 +45,7 @@ export const SPOTS = [
         desc: "Rolling tea gardens, mist-laden valleys and the scent of cardamom at every turn.",
         gradient: "linear-gradient(145deg,#060e04 0%,#0e2208 35%,#1e4a10 65%,#38801c 100%)",
         accent: "#82c254",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2tb8LSbruDb8i1q2OHQJav5UCsxMFoKz0SZBd",
     },
     {
         id: 5,
@@ -53,6 +57,7 @@ export const SPOTS = [
         desc: "Silk-smooth dunes, camel silhouettes at twilight, and a sky full of fire.",
         gradient: "linear-gradient(145deg,#100a02 0%,#2a1c08 35%,#5a3c14 65%,#8a6a30 100%)",
         accent: "#c9a84c",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu22IAiM5HJuKm6a1oNcAQX3HIrPExFsTwqd2C8",
     },
     {
         id: 6,
@@ -64,6 +69,7 @@ export const SPOTS = [
         desc: "Red laterite cliffs plunging into turquoise surf — breakfast above the Arabian Sea.",
         gradient: "linear-gradient(145deg,#020c10 0%,#082030 35%,#104058 65%,#226a80 100%)",
         accent: "#38b2c0",
+        image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CxwCqEkMGXUlPiRduax6DmCerHFV93bWK0Bq",
     },
 ];
 
