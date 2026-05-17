@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), 'Jost', sans-serif;
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.section-h {
+  font-weight: 800;
+}
+
+.gradient-text {
+  background: linear-gradient(101.64deg, #f7e093 12.41%, #ccd77a 33.1%, #d5b97f 52.04%, #d9af3f 83.38%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-gold {
+  background: linear-gradient(90deg, #d4b24b 0%, #c9a84c 45%, #f2d382 100%);
+  color: #060e09;
+}
+
+.header-brand {
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.btn-gold:hover {
+  filter: brightness(1.05);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sage);
+  border-radius: 99px;
+}
