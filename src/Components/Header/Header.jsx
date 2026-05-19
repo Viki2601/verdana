@@ -20,9 +20,7 @@ export default function Header() {
                     <div className="flex h-11 w-11 items-center justify-center rounded-full text-[1.2rem] text-[#c9a84c] shadow-[0_10px_25px_rgba(0,0,0,.18)]">
                         🌿
                     </div>
-                    <span className="header-brand text-[1.75rem] text-white">
-                        Verdana
-                    </span>
+                    <span className="header-brand text-[1.75rem] text-white">Verdana</span>
                 </a>
 
                 <nav className="hidden items-center gap-8 md:flex">
@@ -35,16 +33,9 @@ export default function Header() {
 
                 <div className="flex items-center gap-3">
                     <button className="hidden rounded-full bg-gradient-to-r from-[#c9a84c] via-[#b99b3c] to-[#c9a84c] px-6 py-3 text-[0.78rem] font-semibold text-[#060e09] shadow-[0_12px_30px_rgba(201,168,76,.25)] transition-transform duration-300 hover:-translate-y-0.5 md:inline-flex">
-                        Book a Spot ↗
+                        Book a Spot
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => setMenuOpen(!menuOpen)}
-                        onTouchEnd={(e) => { e.preventDefault(); setMenuOpen((prev) => !prev); }}
-                        className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 transition hover:border-white/25 hover:bg-white/15 md:hidden"
-                        aria-label="Toggle menu"
-                        aria-expanded={menuOpen}
-                    >
+                    <button type="button" onClick={() => setMenuOpen(!menuOpen)} onTouchEnd={(e) => { e.preventDefault(); setMenuOpen((prev) => !prev); }} className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 transition hover:border-white/25 hover:bg-white/15 md:hidden" aria-label="Toggle menu" aria-expanded={menuOpen}>
                         <span className={`pointer-events-none absolute left-1/2 top-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-white transition-all duration-300 origin-center ${menuOpen ? "translate-y-[0px] rotate-45" : "-translate-y-2"}`} />
                         <span className={`pointer-events-none absolute left-1/2 top-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-white transition-all duration-300 origin-center ${menuOpen ? "opacity-0" : "opacity-100"}`} />
                         <span className={`pointer-events-none absolute left-1/2 top-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-white transition-all duration-300 origin-center ${menuOpen ? "-translate-y-[0px] -rotate-45" : "translate-y-2"}`} />

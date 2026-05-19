@@ -1,0 +1,345 @@
+/* ─────────────────────────────────────────────────────────────────
+   loadingscreen.module.css  (match your actual filename exactly)
+   Verdana — Nature Retreats  |  Cloud Loading Screen  v2 (fixed)
+───────────────────────────────────────────────────────────────── */
+
+/* ── Root ─────────────────────────────────────────────────────── */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+/* ── Deep Forest Background ──────────────────────────────────── */
+.bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, #0b1a10 0%, transparent 70%),
+    radial-gradient(ellipse 100% 80% at 20%  20%, #122b18 0%, transparent 60%),
+    linear-gradient(160deg, #0d1f10 0%, #172e1c 40%, #0b1a0f 100%);
+}
+
+/* ── Text Vignette ────────────────────────────────────────────
+   KEY FIX: a dark radial overlay sits above the white clouds but
+   below the text. This creates a dark "clearing" in the center
+   so white typography remains legible on the washed-out clouds.
+─────────────────────────────────────────────────────────────── */
+.textVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 55% at 50% 50%,
+    rgba(5, 18, 8, 0.72)  0%,
+    rgba(5, 18, 8, 0.55) 30%,
+    rgba(5, 18, 8, 0.20) 60%,
+    transparent 85%
+  );
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ── Pulsing central glow ────────────────────────────────────── */
+.fogGlow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 50vw;
+  height: 50vw;
+  max-width: 600px;
+  max-height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(100, 180, 100, 0.06)  0%,
+    rgba(80,  160, 80,  0.03) 50%,
+    transparent 75%
+  );
+  z-index: 6;
+  animation: fogPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fogPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.1); opacity: 1;   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CLOUD SHARED BASE
+═══════════════════════════════════════════════════════════════ */
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: 0;
+  will-change: transform, opacity;
+  z-index: 2;
+}
+
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GATHER KEYFRAMES  (fly in from each edge)
+═══════════════════════════════════════════════════════════════ */
+@keyframes gatherLeft {
+  from { transform: translateX(-130vw) scale(0.85); opacity: 0;    }
+  to   { transform: translateX(0)      scale(1);    opacity: 0.92; }
+}
+@keyframes gatherRight {
+  from { transform: translateX(130vw)  scale(0.85); opacity: 0;    }
+  to   { transform: translateX(0)      scale(1);    opacity: 0.92; }
+}
+@keyframes gatherTop {
+  from { transform: translateY(-130vh) scale(0.85); opacity: 0;    }
+  to   { transform: translateY(0)      scale(1);    opacity: 0.90; }
+}
+@keyframes gatherBottom {
+  from { transform: translateY(130vh)  scale(0.85); opacity: 0;    }
+  to   { transform: translateY(0)      scale(1);    opacity: 0.90; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DISPERSE KEYFRAMES  (fly back out)
+═══════════════════════════════════════════════════════════════ */
+@keyframes disperseLeft {
+  from { opacity: 0.92; }
+  to   { transform: translateX(-130vw) scale(0.8); opacity: 0; }
+}
+@keyframes disperseRight {
+  from { opacity: 0.92; }
+  to   { transform: translateX(130vw)  scale(0.8); opacity: 0; }
+}
+@keyframes disperseTop {
+  from { opacity: 0.90; }
+  to   { transform: translateY(-130vh) scale(0.8); opacity: 0; }
+}
+@keyframes disperseBottom {
+  from { opacity: 0.90; }
+  to   { transform: translateY(130vh)  scale(0.8); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INDIVIDUAL CLOUDS — sizes, positions, gather animations
+═══════════════════════════════════════════════════════════════ */
+
+/* Left edge */
+.cloudL1 {
+  width: 70vw; height: 65vh;
+  left: -10vw; top: -8vh;
+  border-radius: 55% 45% 60% 40% / 50% 55% 45% 50%;
+  animation: gatherLeft 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s both;
+}
+.cloudL1::before { width: 55%; height: 70%; top: -30%; left: 10%; }
+.cloudL1::after  { width: 40%; height: 55%; top: -15%; right: 8%; }
+
+.cloudL2 {
+  width: 62vw; height: 58vh;
+  left: -12vw; bottom: -6vh;
+  border-radius: 45% 55% 50% 60% / 60% 40% 55% 45%;
+  animation: gatherLeft 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.35s both;
+}
+.cloudL2::before { width: 50%; height: 75%; top: -35%; left: 20%; }
+.cloudL2::after  { width: 38%; height: 60%; top: -20%; right: 12%; }
+
+/* Right edge */
+.cloudR1 {
+  width: 68vw; height: 60vh;
+  right: -10vw; top: 5vh;
+  border-radius: 50% 50% 55% 45% / 45% 55% 50% 50%;
+  animation: gatherRight 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both;
+}
+.cloudR1::before { width: 52%; height: 72%; top: -32%; left: 12%; }
+.cloudR1::after  { width: 40%; height: 58%; top: -18%; right: 10%; }
+
+.cloudR2 {
+  width: 60vw; height: 55vh;
+  right: -8vw; bottom: 2vh;
+  border-radius: 55% 45% 45% 55% / 55% 45% 55% 45%;
+  animation: gatherRight 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s both;
+}
+.cloudR2::before { width: 48%; height: 68%; top: -28%; left: 18%; }
+.cloudR2::after  { width: 36%; height: 55%; top: -16%; right: 14%; }
+
+/* Top edge */
+.cloudT1 {
+  width: 78vw; height: 52vh;
+  left: 10vw; top: -12vh;
+  border-radius: 50% 50% 55% 45% / 45% 50% 50% 55%;
+  animation: gatherTop 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both;
+}
+.cloudT1::before { width: 58%; height: 75%; top: -30%; left: 8%; }
+.cloudT1::after  { width: 42%; height: 60%; top: -15%; right: 6%; }
+
+.cloudT2 {
+  width: 55vw; height: 46vh;
+  right: 6vw; top: -14vh;
+  border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%;
+  animation: gatherTop 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both;
+}
+.cloudT2::before { width: 50%; height: 70%; top: -35%; left: 15%; }
+.cloudT2::after  { width: 38%; height: 55%; top: -20%; right: 10%; }
+
+/* Bottom edge */
+.cloudB1 {
+  width: 76vw; height: 56vh;
+  left: 8vw; bottom: -14vh;
+  border-radius: 50% 50% 45% 55% / 55% 45% 50% 50%;
+  animation: gatherBottom 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+}
+.cloudB1::before { width: 55%; height: 72%; bottom: -25%; left: 10%; top: auto; }
+.cloudB1::after  { width: 40%; height: 58%; bottom: -12%; right: 8%;  top: auto; }
+
+.cloudB2 {
+  width: 58vw; height: 48vh;
+  right: 4vw; bottom: -10vh;
+  border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
+  animation: gatherBottom 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.45s both;
+}
+.cloudB2::before { width: 50%; height: 68%; bottom: -22%; left: 18%; top: auto; }
+.cloudB2::after  { width: 36%; height: 54%; bottom: -10%; right: 12%; top: auto; }
+
+/* ═══════════════════════════════════════════════════════════════
+   DISPERSE CLASSES  (override gather, trigger fly-out)
+═══════════════════════════════════════════════════════════════ */
+.disperseLeft   { animation: disperseLeft   1.3s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important; }
+.disperseRight  { animation: disperseRight  1.3s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important; }
+.disperseTop    { animation: disperseTop    1.3s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important; }
+.disperseBottom { animation: disperseBottom 1.3s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important; }
+
+/* Stagger second cloud in each pair */
+.dispersing .cloudL2.disperseLeft,
+.dispersing .cloudR2.disperseRight,
+.dispersing .cloudT2.disperseTop,
+.dispersing .cloudB2.disperseBottom {
+  animation-delay: 0.1s !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTENT  (sits above vignette via z-index: 10)
+═══════════════════════════════════════════════════════════════ */
+.content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  gap: 0;
+  pointer-events: none;
+}
+
+.contentVisible {
+  opacity: 1;
+}
+
+/* Eyebrow */
+.eyebrow {
+  font-family: var(--font-jost);
+  font-size: clamp(0.58rem, 1.1vw, 0.7rem);
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 185, 0.75);
+  margin: 0 0 1.1rem;
+  animation: riseIn 0.8s ease 2.8s both;
+}
+
+/* Brand */
+.brand {
+  font-family: var(--font-cormorant);
+  font-size: clamp(4rem, 9.5vw, 7.5rem);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 0 0.9rem;
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.3), 0 2px 20px rgba(0,0,0,0.4);
+  animation: riseIn 0.9s ease 2.95s both;
+}
+
+/* Ornament */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.8rem;
+  animation: riseIn 0.8s ease 3.1s both;
+}
+.ornLine {
+  display: block;
+  width: 44px;
+  height: 1px;
+  background: rgba(180, 220, 185, 0.4);
+}
+.ornLeaf {
+  font-size: 0.5rem;
+  color: rgba(180, 220, 185, 0.6);
+}
+
+/* Progress */
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: clamp(160px, 22vw, 250px);
+  animation: riseIn 0.8s ease 3.2s both;
+}
+
+.track {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  position: relative;
+  overflow: hidden;
+}
+
+.fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: linear-gradient(90deg, rgba(160, 220, 160, 0.6), #ffffff);
+  transition: width 0.08s linear;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.pct {
+  font-family: var(--font-jost);
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  color: rgba(210, 235, 215, 0.65);
+}
+
+/* Tagline */
+.tagline {
+  font-family: var(--font-cormorant);
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.28em;
+  color: rgba(200, 230, 205, 0.5);
+  margin: 1.5rem 0 0;
+  animation: riseIn 0.8s ease 3.35s both;
+}
+
+/* Shared entrance */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
