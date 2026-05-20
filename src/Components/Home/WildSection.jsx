@@ -5,8 +5,26 @@ import { useEffect, useRef, useState } from 'react';
 const VIDEO_URL =
     'https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CdYCYykMGXUlPiRduax6DmCerHFV93bWK0Bq';
 
-const TRIM_END = 10; // seconds to cut from end
-const LERP = 0.1; // 0.05 = silky slow, 0.15 = snappy — 0.1 is the sweet spot
+const TRIM_END = 10;    // cut last N seconds
+const SETTLE_DIST = 0.03;  // seconds — close enough to stop chasing
+const IDLE_MS = 220;   // ms without scroll → pause and lock
+const MAX_RATE = 6;     // cap playbackRate multiplier
+
+/*
+  WHY THIS IS DIFFERENT FROM THE LERP APPROACH
+  ─────────────────────────────────────────────
+  Lerp set vid.currentTime every rAF frame.
+  Every seek = browser decodes from nearest keyframe → visible stutter.
+
+  This version:
+  • Forward scroll  → vid.play() at dynamic playbackRate to chase the target.
+                      Native playback = zero stutter.
+  • Backward scroll → single seek to target (unavoidable; browsers can't
+                      play video in reverse, so one seek is the minimum).
+  • Idle (scroll stopped) → pause + one final seek to lock exact position.
+
+  The loop only runs while actively chasing a target; it exits when settled.
+*/
 
 const PANELS = [
     {
@@ -51,17 +69,15 @@ function panelOpacity(progress, at, end) {
 export default function WildSection() {
     const wrapRef = useRef(null);
     const videoRef = useRef(null);
-
-    // Scroll state
-    const targetRef = useRef(0);   // desired video time (from scroll)
-    const lerpedRef = useRef(0);   // current smoothed time (drives video)
+    const targetRef = useRef(0);
+    const maxTimeRef = useRef(0);
     const rafRef = useRef(null);
-    const maxTimeRef = useRef(0);   // duration − TRIM_END
+    const idleTimerRef = useRef(null);
 
     const [progress, setProgress] = useState(0);
     const [ready, setReady] = useState(false);
 
-    /* ── Load video metadata ──────────────────────────────── */
+    /* ── 1. Metadata ──────────────────────────────────────── */
     useEffect(() => {
         const vid = videoRef.current;
         if (!vid) return;
@@ -72,92 +88,118 @@ export default function WildSection() {
             maxTimeRef.current = Math.max(0, vid.duration - TRIM_END);
             setReady(true);
         };
-
-        if (vid.readyState >= 1) {
-            onReady();
-        } else {
-            vid.addEventListener('loadedmetadata', onReady, { once: true });
-        }
+        if (vid.readyState >= 1) onReady();
+        else vid.addEventListener('loadedmetadata', onReady, { once: true });
     }, []);
 
-    /* ── Scroll listener → sets targetRef only ─────────────
-       No video seeking here — keeps scroll handler lightweight.
-    ──────────────────────────────────────────────────────── */
+    /* ── 2. Core scroll → play / rate / seek logic ────────── */
     useEffect(() => {
         if (!ready) return;
+        const vid = videoRef.current;
 
+        /* Chase loop — runs only while video isn't settled */
+        const startChase = () => {
+            if (rafRef.current) return; // already running
+
+            const loop = () => {
+                const target = targetRef.current;
+                const current = vid.currentTime;
+                const diff = target - current;
+
+                if (Math.abs(diff) <= SETTLE_DIST) {
+                    // Close enough — stop chasing
+                    rafRef.current = null;
+                    return;
+                }
+
+                if (diff > 0) {
+                    /* ── FORWARD: let video play, boost rate to catch up ── */
+                    // Rate scales with how far behind we are:
+                    // diff 0.1s → ~1.2x | diff 0.5s → ~2x | diff 2s → ~5x
+                    const rate = Math.min(MAX_RATE, 1 + diff * 2);
+                    vid.playbackRate = rate;
+                    if (vid.paused) vid.play().catch(() => { });
+
+                    // If very far behind, jump ahead to within 0.4s of target
+                    // so the catch-up play feels instant rather than watching
+                    // the video fast-forward a long way
+                    if (diff > 1.2) {
+                        vid.currentTime = target - 0.35;
+                    }
+                } else {
+                    /* ── BACKWARD: one seek, then stop (can't play in reverse) */
+                    vid.pause();
+                    vid.currentTime = Math.max(0, target);
+                    rafRef.current = null;
+                    return;
+                }
+
+                rafRef.current = requestAnimationFrame(loop);
+            };
+
+            rafRef.current = requestAnimationFrame(loop);
+        };
+
+        const lockToTarget = () => {
+            // Called when scroll goes idle — stop loop, land exactly
+            if (rafRef.current) {
+                cancelAnimationFrame(rafRef.current);
+                rafRef.current = null;
+            }
+            vid.pause();
+            vid.currentTime = targetRef.current;
+        };
+
+        /* Scroll handler — only updates target + schedules idle */
         const onScroll = () => {
             const wrap = wrapRef.current;
             if (!wrap) return;
 
-            const scrollable = wrap.offsetHeight - window.innerHeight; // 200vh
+            const scrollable = wrap.offsetHeight - window.innerHeight;
             const scrolled = Math.max(0, -wrap.getBoundingClientRect().top);
             const p = Math.min(1, Math.max(0, scrolled / scrollable));
 
             setProgress(p);
             targetRef.current = p * maxTimeRef.current;
+
+            startChase();
+
+            // Reset idle countdown on every scroll event
+            clearTimeout(idleTimerRef.current);
+            idleTimerRef.current = setTimeout(lockToTarget, IDLE_MS);
         };
 
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-        return () => window.removeEventListener('scroll', onScroll);
-    }, [ready]);
+        onScroll(); // init position
 
-    /* ── Continuous rAF lerp loop ────────────────────────────
-       Runs independently of scroll. Every frame it moves
-       lerpedRef a fixed fraction toward targetRef, then
-       writes to vid.currentTime only when meaningful.
-       This produces butter-smooth interpolation between any
-       two seek points — no stutter, no frame cuts.
-    ──────────────────────────────────────────────────────── */
-    useEffect(() => {
-        if (!ready) return;
-
-        const loop = () => {
-            const vid = videoRef.current;
-            if (vid) {
-                const diff = targetRef.current - lerpedRef.current;
-
-                // Only drive the video while there's meaningful difference
-                if (Math.abs(diff) > 0.001) {
-                    lerpedRef.current += diff * LERP;
-
-                    // Clamp within valid range
-                    const clamped = Math.min(
-                        Math.max(0, lerpedRef.current),
-                        maxTimeRef.current
-                    );
-                    vid.currentTime = clamped;
-                }
-            }
-            rafRef.current = requestAnimationFrame(loop);
-        };
-
-        rafRef.current = requestAnimationFrame(loop);
         return () => {
+            window.removeEventListener('scroll', onScroll);
+            clearTimeout(idleTimerRef.current);
             if (rafRef.current) cancelAnimationFrame(rafRef.current);
         };
     }, [ready]);
+
+    /* ─────────────────────────────────────────────────────── */
 
     return (
         <div
             ref={wrapRef}
             style={{ position: 'relative', height: '300vh', background: '#060e09' }}
         >
-            {/* Top blend */}
+            {/* Top blend from previous section */}
             <div style={{
                 position: 'absolute', top: 0, left: 0, right: 0, height: 130,
                 background: 'linear-gradient(to bottom, #060e09, transparent)',
                 zIndex: 20, pointerEvents: 'none',
             }} />
 
-            {/* ── Sticky viewport ─────────────────────────────── */}
+            {/* ── Sticky window ───────────────────────────── */}
             <div style={{
                 position: 'sticky', top: 0,
                 height: '100vh', overflow: 'hidden',
             }}>
 
-                {/* Video */}
+                {/* Video — muted, paused by default; play() called by chase loop */}
                 <video
                     ref={videoRef}
                     src={VIDEO_URL}
@@ -172,19 +214,17 @@ export default function WildSection() {
                     }}
                 />
 
-                {/* Gradient overlays */}
+                {/* Overlays */}
                 <div style={{
                     position: 'absolute', inset: 0, zIndex: 1,
-                    background:
-                        'linear-gradient(to bottom, rgba(6,14,9,0.40) 0%, rgba(6,14,9,0.18) 50%, rgba(6,14,9,0.65) 100%)',
+                    background: 'linear-gradient(to bottom, rgba(6,14,9,0.38) 0%, rgba(6,14,9,0.16) 50%, rgba(6,14,9,0.62) 100%)',
                 }} />
                 <div style={{
                     position: 'absolute', inset: 0, zIndex: 2,
-                    background:
-                        'radial-gradient(ellipse 78% 68% at 50% 50%, transparent 28%, rgba(6,14,9,0.48) 100%)',
+                    background: 'radial-gradient(ellipse 78% 68% at 50% 50%, transparent 28%, rgba(6,14,9,0.46) 100%)',
                 }} />
 
-                {/* ── Scroll progress line ─────────────────────── */}
+                {/* Progress bar */}
                 <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0,
                     height: 2, background: 'rgba(180,220,185,0.10)', zIndex: 20,
@@ -193,15 +233,16 @@ export default function WildSection() {
                         height: '100%',
                         width: `${progress * 100}%`,
                         background: 'linear-gradient(90deg, rgba(180,220,185,0.45), rgba(244,239,230,0.65))',
-                        transition: 'width 0.03s linear',
+                        transition: 'width 0.04s linear',
                     }} />
                 </div>
 
-                {/* ── Scroll nudge ─────────────────────────────── */}
+                {/* Scroll nudge */}
                 <div style={{
                     position: 'absolute', bottom: '2.8rem', left: '50%',
                     transform: 'translateX(-50%)', zIndex: 20,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.45rem',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: '0.45rem',
                     opacity: progress < 0.04 ? 1 : 0,
                     transition: 'opacity 0.6s ease',
                     pointerEvents: 'none',
@@ -222,7 +263,7 @@ export default function WildSection() {
                     </svg>
                 </div>
 
-                {/* ── Content panels ────────────────────────────── */}
+                {/* Content panels */}
                 <div style={{
                     position: 'absolute', inset: 0, zIndex: 10,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -233,23 +274,18 @@ export default function WildSection() {
                     }}>
                         {PANELS.map((panel, pi) => {
                             const op = panelOpacity(progress, panel.at, panel.end);
-                            const yDrift = op === 0
-                                ? (progress < panel.at ? 28 : -28)
-                                : 0;
+                            const yDrift = op === 0 ? (progress < panel.at ? 28 : -28) : 0;
 
                             return (
                                 <div key={pi} style={{
                                     position: 'absolute', inset: 0,
                                     display: 'flex', flexDirection: 'column',
                                     alignItems: 'center', justifyContent: 'center',
-                                    gap: 0,
                                     opacity: op,
                                     transform: `translateY(${yDrift}px)`,
                                     transition: 'opacity 0.4s ease, transform 0.4s ease',
                                     pointerEvents: op > 0.15 ? 'all' : 'none',
                                 }}>
-
-                                    {/* Eyebrow */}
                                     <p style={{
                                         fontFamily: 'var(--font-jost)',
                                         fontSize: 'clamp(0.54rem, 0.88vw, 0.64rem)',
@@ -259,7 +295,6 @@ export default function WildSection() {
                                         margin: '0 0 1.3rem',
                                     }}>{panel.eyebrow}</p>
 
-                                    {/* Heading */}
                                     <h2 style={{
                                         fontFamily: 'var(--font-cormorant)',
                                         fontSize: 'clamp(3rem, 7.5vw, 6.2rem)',
@@ -277,7 +312,6 @@ export default function WildSection() {
                                         ))}
                                     </h2>
 
-                                    {/* Ornament */}
                                     <div style={{
                                         display: 'flex', alignItems: 'center',
                                         gap: '0.8rem', margin: '1.3rem 0 1.5rem',
@@ -287,7 +321,6 @@ export default function WildSection() {
                                         <span style={{ display: 'block', width: '44px', height: '1px', background: 'rgba(180,220,185,0.28)' }} />
                                     </div>
 
-                                    {/* Body */}
                                     {panel.sub && (
                                         <p style={{
                                             fontFamily: 'var(--font-jost)',
@@ -299,7 +332,6 @@ export default function WildSection() {
                                         }}>{panel.sub}</p>
                                     )}
 
-                                    {/* CTA — last panel */}
                                     {panel.cta && (
                                         <div style={{
                                             display: 'flex', gap: '1.6rem',
@@ -330,7 +362,7 @@ export default function WildSection() {
                     </div>
                 </div>
 
-                {/* Bottom blend */}
+                {/* Bottom blend into CTA */}
                 <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0, height: 170,
                     background: 'linear-gradient(to top, #060e09, transparent)',
@@ -339,11 +371,11 @@ export default function WildSection() {
             </div>
 
             <style>{`
-        @keyframes nudgeBounce {
-          0%, 100% { transform: translateY(0);  opacity: 0.75; }
-          50%       { transform: translateY(5px); opacity: 0.35; }
-        }
-      `}</style>
+                @keyframes nudgeBounce {
+                    0%, 100% { transform: translateY(0);   opacity: 0.75; }
+                    50%       { transform: translateY(5px); opacity: 0.35; }
+                }
+            `}</style>
         </div>
     );
 }
