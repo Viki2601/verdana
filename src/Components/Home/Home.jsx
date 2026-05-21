@@ -9,6 +9,7 @@ import RentsSection from "./Rents";
 import RoomsSection from "./Rooms";
 import SpotsSection from "./Spots";
 import WildSection from "./WildSection";
+import ZoomSection from "./ZoomSection";
 
 export default function Home() {
     const { muted, toggle } = useNatureAudio();
@@ -19,11 +20,11 @@ export default function Home() {
             <Landing />
             <SpotsSection />
             <RoomsSection />
+            <ZoomSection />        {/* scroll-zoom forest reveal */}
             <PlansSection />
             <RentsSection />
             <WildSection />
             <CTASection />
-
             <AudioToggle muted={muted} toggle={toggle} />
         </div>
     );

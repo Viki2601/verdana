@@ -1,9 +1,6 @@
 'use client';
-
 import { useEffect, useRef, useState } from 'react';
-
-const VIDEO_URL =
-    'https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CdYCYykMGXUlPiRduax6DmCerHFV93bWK0Bq';
+const VIDEO_URL = 'https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CdYCYykMGXUlPiRduax6DmCerHFV93bWK0Bq';
 
 const TRIM_END = 10;    // cut last N seconds
 const SETTLE_DIST = 0.03;  // seconds — close enough to stop chasing
@@ -35,21 +32,21 @@ const PANELS = [
         sub: 'Scroll to journey through nature.',
     },
     {
-        at: 0.26, end: 0.56,
+        at: 0.28, end: 0.56,
         eyebrow: '✦ Zero Compromise',
         heading: ['Where Silence', 'is the', 'Amenity'],
         italic: 2,
         sub: 'Every retreat is assessed for light pollution, acoustic isolation, and ecological harmony before it joins our collection.',
     },
     {
-        at: 0.54, end: 0.80,
+        at: 0.56, end: 0.80,
         eyebrow: '✦ Certified Sanctuaries',
         heading: ['Nights Under', 'A Thousand', 'Stars'],
         italic: 1,
         sub: "All listed spots pass our Night Sky Standard. If you can't see the Milky Way, it doesn't make the list.",
     },
     {
-        at: 0.78, end: 1.0,
+        at: 0.80, end: 1.0,
         eyebrow: '✦ Your Escape Awaits',
         heading: ['340+ Retreats.', 'One', 'Decision.'],
         italic: 2,
