@@ -20,7 +20,7 @@ export default function Home() {
             <Landing />
             <SpotsSection />
             <RoomsSection />
-            <ZoomSection />        {/* scroll-zoom forest reveal */}
+            <ZoomSection />
             <PlansSection />
             <RentsSection />
             <WildSection />

@@ -1,6 +1,6 @@
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
-import Providers from "@/Components/Provider";
+import Providers from "@/Components/Loading/Provider";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
