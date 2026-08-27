@@ -3,6 +3,7 @@ import { useNatureAudio } from "@/hooks/useNatureAudio";
 import AudioToggle from "../AudioToggle/AudioToggle";
 import Header from "../Header/Header";
 import CTASection from "./CTASection";
+import Footer from "../Footer/Footer";
 import Landing from "./Landing";
 import PlansSection from "./Plans";
 import RentsSection from "./Rents";
@@ -25,6 +26,7 @@ export default function Home() {
             <RentsSection />
             <WildSection />
             <CTASection />
+            <Footer />
             <AudioToggle muted={muted} toggle={toggle} />
         </div>
     );

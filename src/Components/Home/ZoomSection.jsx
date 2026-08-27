@@ -33,45 +33,44 @@ export default function ZoomSection() {
     const rafRef = useRef(null);
     const [progress, setProgress] = useState(0);
 
-    /* ── Scroll → rAF → direct DOM writes (no re-renders) ─── */
+    /* ── Keep the visual layers in sync with the section's scroll range. ── */
     useEffect(() => {
+        const update = () => {
+            rafRef.current = null;
+            const wrap = wrapRef.current;
+            if (!wrap) return;
+
+            const scrollable = Math.max(1, wrap.offsetHeight - window.innerHeight);
+            const scrolled = Math.max(0, -wrap.getBoundingClientRect().top);
+            const nextProgress = Math.min(1, Math.max(0, scrolled / scrollable));
+            setProgress(nextProgress);
+
+            if (bgRef.current) {
+                bgRef.current.style.transform = `scale(${1 + nextProgress * 0.45})`;
+            }
+
+            if (darkRef.current) {
+                darkRef.current.style.opacity = String(Math.min(0.82, nextProgress * 1.1));
+            }
+
+            if (overlayRef.current) {
+                const scale = 1 + nextProgress;
+                const z = nextProgress * 280;
+                overlayRef.current.style.transform = `scale(${scale}) translateZ(${z}px)`;
+            }
+        };
+
         const onScroll = () => {
             if (rafRef.current) return;
-            rafRef.current = requestAnimationFrame(() => {
-                rafRef.current = null;
-                const wrap = wrapRef.current;
-                if (!wrap) return;
-                const scrollable = wrap.offsetHeight - window.innerHeight;
-                const scrolled = Math.max(0, -wrap.getBoundingClientRect().top);
-                const p = Math.min(1, Math.max(0, scrolled / scrollable));
-                setProgress(p);
-
-                /* ── Background: slow grounded zoom ── */
-                if (bgRef.current) {
-                    bgRef.current.style.transform = `scale(${1 + p * 0.45})`;
-                }
-
-                /* ── Background darkening ── */
-                if (darkRef.current) {
-                    darkRef.current.style.opacity = String(Math.min(0.82, p * 1.1));
-                }
-
-                /* ── Overlay: fast perspective zoom (the hero effect) ──
-                   Matches GSAP: scale(2), z(250), perspective(500px)
-                   translateZ grows from 0 → 280px (slightly past 250 for drama)
-                ── */
-                if (overlayRef.current) {
-                    const s = 1 + p * 1.0;
-                    const z = p * 280;
-                    overlayRef.current.style.transform = `scale(${s}) translateZ(${z}px)`;
-                }
-            });
+            rafRef.current = requestAnimationFrame(update);
         };
 
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
+        window.addEventListener('resize', onScroll);
+        update();
         return () => {
             window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
             if (rafRef.current) cancelAnimationFrame(rafRef.current);
         };
     }, []);
@@ -90,11 +89,11 @@ export default function ZoomSection() {
 
                 {/* ── [0] Background image ─────────────────────────── */}
                 <div style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', }}>
-                    <img ref={bgRef} src={BG} alt="" aria-hidden="true" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transformOrigin: 'center center', willChange: 'transform', display: 'block', }} />
+                    <img ref={bgRef} src={BG} alt="" aria-hidden="true" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transformOrigin: 'center center', transform: `scale(${1 + progress * 0.45})`, willChange: 'transform', display: 'block', }} />
                 </div>
 
                 {/* ── [1] Background darkening overlay ─────────────── */}
-                <div ref={darkRef} style={{ position: 'absolute', inset: 0, zIndex: 1, background: '#060e09', opacity: 0, pointerEvents: 'none', }} />
+                <div ref={darkRef} style={{ position: 'absolute', inset: 0, zIndex: 1, background: '#060e09', opacity: Math.min(0.82, progress * 1.1), pointerEvents: 'none', }} />
 
                 {/* ── [2] TEXT — lives BEHIND forest overlay ────────── */}
                 <div style={{ position: 'absolute', inset: 0, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: textOp, transform: `translateY(${textY}px)`, pointerEvents: 'none', }}>
@@ -122,7 +121,7 @@ export default function ZoomSection() {
 
                 {/* ── [3] Forest overlay — zooms away to reveal text ────── */}
                 <div style={{ position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', perspective: '500px', }}>
-                    <img ref={overlayRef} src={OVERLAY} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transformOrigin: 'center center', willChange: 'transform', maskImage: `radial-gradient(ellipse 42% 42% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.65) 42%, rgba(0,0,0,1) 62%)`, WebkitMaskImage: `radial-gradient(ellipse 42% 42% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.65) 42%, rgba(0,0,0,1) 62%)`, display: 'block', }} />
+                    <img ref={overlayRef} src={OVERLAY} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transformOrigin: 'center center', transform: `scale(${1 + progress}) translateZ(${progress * 280}px)`, willChange: 'transform', maskImage: `radial-gradient(ellipse 42% 42% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.65) 42%, rgba(0,0,0,1) 62%)`, WebkitMaskImage: `radial-gradient(ellipse 42% 42% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.65) 42%, rgba(0,0,0,1) 62%)`, display: 'block', }} />
                 </div>
 
                 {/* ── [4] Permanent edge vignette (always-on polish) ── */}

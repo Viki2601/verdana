@@ -11,8 +11,8 @@ export default function RoomsSection() {
                 <div className="mb-14 max-w-2xl">
                     <div className="eyebrow mb-3 text-[#a0b187]">✦ Your Sanctuary Awaits</div>
                     <h2 className="section-h text-[#f4efe6]">
-                        Curated Stays<br />
-                        <em className="italic text-[#7fb069]">for Every Soul</em>
+                        Curated Stays 
+                        <em className="italic text-[#7fb069]"> for Every Soul</em>
                     </h2>
                     <p className="mt-4 max-w-xl text-sm leading-7 text-[#c8d3b7]/75">
                         Discover intimate retreats with immersive mood, premium finishes, and views that feel made just for you.

@@ -10,7 +10,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#040c06 0%,#0d2b1a 35%,#1a5c35 65%,#2d8a50 100%)",
         accent: "#7fb069",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2iIFU5bKEqLJiCV1YMgvynGTPHWueSKxXOAQt",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu23PPJnckpRcn6sTu4vioaKWgMXG0rb89FPVDt",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2Sz5i2UDIk7xBnRCN398vFeADlMOqo4XhsdrJ",
     },
     {
         id: 2,
@@ -23,7 +23,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#060a12 0%,#111e30 35%,#1e3d60 65%,#3a6890 100%)",
         accent: "#6ab4d8",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2SjJuVYDIk7xBnRCN398vFeADlMOqo4XhsdrJ",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2gEHyp1xGR7ExUZ3e0OwQzWk48riScvdDBJAo",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2kJz6da12NAtP9fHR5muSiysUjWBIFGzxXZcC",
     },
     {
         id: 3,
@@ -36,7 +36,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#040a18 0%,#0a1e40 35%,#1a3e80 65%,#2e6aaa 100%)",
         accent: "#4ab0e0",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2EtdycXcNm4gZS0G63lf5oKycB7RPMstJbxFi",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu26ITTehbZQCE0jxosZDv3NetW2dn4UhpabyPO",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2Jawtj8LRdV0yHkjc6C23ex8fMDtswQB1a4WE",
     },
     {
         id: 4,
@@ -49,7 +49,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#060e04 0%,#0e2208 35%,#1e4a10 65%,#38801c 100%)",
         accent: "#82c254",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2tb8LSbruDb8i1q2OHQJav5UCsxMFoKz0SZBd",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu29KGd125LwqQXRxY267OEPIGSy5zaVTbleuvs",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2HoZzzzu6esjuhNMCvDq9kPfLXYSmFaEOoHR5",
     },
     {
         id: 5,
@@ -62,7 +62,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#100a02 0%,#2a1c08 35%,#5a3c14 65%,#8a6a30 100%)",
         accent: "#c9a84c",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu22IAiM5HJuKm6a1oNcAQX3HIrPExFsTwqd2C8",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2j3oU14VxeZkG20zp8mfcog1tTAObMUwQSjn9",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2cG2x2R7qs4lu2ijz80Hm6QBPJnoTedqYfAbk",
     },
     {
         id: 6,
@@ -75,7 +75,7 @@ export const SPOTS = [
         gradient: "linear-gradient(145deg,#020c10 0%,#082030 35%,#104058 65%,#226a80 100%)",
         accent: "#38b2c0",
         image: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CxwCqEkMGXUlPiRduax6DmCerHFV93bWK0Bq",
-        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu23Pc6rcLpRcn6sTu4vioaKWgMXG0rb89FPVDt",
+        video: "https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2xhsi3oInykdUPZFzqlK2svaOJc36A14uWNMn",
     },
 ];
 
@@ -142,7 +142,7 @@ export const PLANS = [
             "Concierge support 24/7",
             "10% off all rentals",
         ],
-        featured: true,
+        featured: false,
     },
     {
         name: "Serenity",

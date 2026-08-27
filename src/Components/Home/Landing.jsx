@@ -4,15 +4,21 @@ import dynamic from "next/dynamic";
 const WaterWave = dynamic(() => import("react-water-wave"), { ssr: false, loading: () => null });
 
 const useWebGLSupport = () => {
-    const [supported] = useState(() => {
+    const [supported, setSupported] = useState(null);
+
+    useEffect(() => {
+        let frameId;
         try {
             const canvas = document.createElement("canvas");
             const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-            return !!gl;
+            frameId = requestAnimationFrame(() => setSupported(!!gl));
         } catch {
-            return false;
+            frameId = requestAnimationFrame(() => setSupported(false));
         }
-    });
+
+        return () => cancelAnimationFrame(frameId);
+    }, []);
+
     return supported;
 };
 
@@ -126,7 +132,7 @@ function LandingContent({ scrollY }) {
                         ✦ Nature-First Escapes ✦
                     </div>
 
-                    <h1 className="section-h mb-6 max-w-[14ch] text-[clamp(3rem,4.8vw,5.8rem)] leading-[0.95] tracking-[-0.04em] text-[#f4efe6]">
+                    <h1 className="font-[800] mb-6 max-w-[14ch] text-[clamp(3rem,4.8vw,5.8rem)] leading-[0.95] tracking-[-0.04em] text-[#f4efe6]">
                         Find your next
                         <br />
                         <span className="gradient-text">mountain retreat</span>

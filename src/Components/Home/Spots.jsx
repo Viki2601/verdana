@@ -24,7 +24,7 @@ function SpotCard({ spot }) {
     };
 
     return (
-        <div className="relative overflow-hidden rounded-[36px] border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.35)] cursor-pointer" style={{ minHeight: '300px', height: '300px' }} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+        <div className="relative overflow-hidden rounded-[36px] border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.35)] cursor-pointer" style={{ minHeight: '280px', height: '280px' }} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
             <div className="absolute inset-0 bg-center bg-no-repeat bg-cover transition-opacity duration-500" style={{ backgroundImage: `url(${spot?.image})`, backgroundColor: spot?.gradient, opacity: hovered ? 0 : 1, }} />
             <video ref={videoRef} src={spot?.video} muted loop playsInline preload="none" className="absolute inset-0 w-full h-full transition-opacity duration-500" style={{ objectFit: 'cover', objectPosition: 'center', opacity: hovered ? 1 : 0, }} />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" />

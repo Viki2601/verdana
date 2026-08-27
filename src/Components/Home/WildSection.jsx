@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-const VIDEO_URL = 'https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2CdYCYykMGXUlPiRduax6DmCerHFV93bWK0Bq';
+const VIDEO_URL = 'https://zhanfg2pg2.ufs.sh/f/c8fuuCqs4lu2EoA4btNm4gZS0G63lf5oKycB7RPMstJbxFik';
 
 const TRIM_END = 10;    // cut last N seconds
 const SETTLE_DIST = 0.03;  // seconds — close enough to stop chasing
 const IDLE_MS = 220;   // ms without scroll → pause and lock
-const MAX_RATE = 6;     // cap playbackRate multiplier
+const MAX_RATE = 60;     // cap playbackRate multiplier
 
 /*
   WHY THIS IS DIFFERENT FROM THE LERP APPROACH
@@ -16,8 +16,8 @@ const MAX_RATE = 6;     // cap playbackRate multiplier
   This version:
   • Forward scroll  → vid.play() at dynamic playbackRate to chase the target.
                       Native playback = zero stutter.
-  • Backward scroll → single seek to target (unavoidable; browsers can't
-                      play video in reverse, so one seek is the minimum).
+    • Backward scroll → pause and seek each frame to follow the target
+                                            (browsers can't play video in reverse natively).
   • Idle (scroll stopped) → pause + one final seek to lock exact position.
 
   The loop only runs while actively chasing a target; it exits when settled.
@@ -70,6 +70,7 @@ export default function WildSection() {
     const maxTimeRef = useRef(0);
     const rafRef = useRef(null);
     const idleTimerRef = useRef(null);
+    const reverseSeekPendingRef = useRef(false);
 
     const [progress, setProgress] = useState(0);
     const [ready, setReady] = useState(false);
@@ -93,6 +94,11 @@ export default function WildSection() {
     useEffect(() => {
         if (!ready) return;
         const vid = videoRef.current;
+
+        const onSeeked = () => {
+            reverseSeekPendingRef.current = false;
+            startChase();
+        };
 
         /* Chase loop — runs only while video isn't settled */
         const startChase = () => {
@@ -124,10 +130,16 @@ export default function WildSection() {
                         vid.currentTime = target - 0.35;
                     }
                 } else {
-                    /* ── BACKWARD: one seek, then stop (can't play in reverse) */
+                    /* ── BACKWARD: coalesce seeks to avoid decode thrashing */
                     vid.pause();
-                    vid.currentTime = Math.max(0, target);
-                    rafRef.current = null;
+                    if (!reverseSeekPendingRef.current) {
+                        reverseSeekPendingRef.current = true;
+                        vid.currentTime = Math.max(0, target);
+                    } else {
+                        rafRef.current = null;
+                        return;
+                    }
+                    rafRef.current = requestAnimationFrame(loop);
                     return;
                 }
 
@@ -166,13 +178,16 @@ export default function WildSection() {
             idleTimerRef.current = setTimeout(lockToTarget, IDLE_MS);
         };
 
+        vid.addEventListener('seeked', onSeeked);
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll(); // init position
 
         return () => {
+            vid.removeEventListener('seeked', onSeeked);
             window.removeEventListener('scroll', onScroll);
             clearTimeout(idleTimerRef.current);
             if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            reverseSeekPendingRef.current = false;
         };
     }, [ready]);
 
